@@ -24,7 +24,7 @@ public class Clerk extends Staff
         companyName="";
     }
     
-    Clerk(Branch branch, int user_id, String name, String surname, double salary, String mail, String password, String mobilePhone, String companyName)
+    Clerk( int user_id, Branch branch, String name, String surname, double salary, String mail, String password, String mobilePhone, String companyName)
     {
         super(user_id, name, surname, salary, mail, password, mobilePhone);
         this.branch = branch;
