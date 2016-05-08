@@ -1,5 +1,3 @@
-import java.sql.*;
-import java.util.ArrayList;
 public class ARDBS 
 {
     public static void main(String[] args) 
@@ -39,9 +37,6 @@ public class ARDBS
         
         for(int i = 0; i < f.size() ; i++){
             f.get(i).displayForCustomer();
-        }*/
-        
-        
-        
+        }*/  
     }
 }

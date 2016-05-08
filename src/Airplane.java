@@ -36,26 +36,15 @@ public class Airplane
         getSeatList().add(s);
         seatCount++;
     }
-    
-    
 
-    /**
-     * @return the seatList
-     */
     public ArrayList<Seat> getSeatList() {
         return seatList;
     }
 
-    /**
-     * @param seatList the seatList to set
-     */
     public void setSeatList(ArrayList<Seat> seatList) {
         this.seatList = seatList;
     }
 
-    /**
-     * @return the airplane_id
-     */
     public int getAirplane_id() {
         return airplane_id;
     }
