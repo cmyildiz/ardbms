@@ -751,32 +751,28 @@ public class DatabaseController
         return result;
 
     }
-    private boolean dataExists(String table_name, String uniqueAttributeName, String uniqueAttribute)
-    {
-        
+    private boolean dataExists(String table_name, String uniqueAttributeName, String uniqueAttribute){
         try
         {
             String result = "";
-            preStt = conn.prepareStatement("SELECT " + table_name + " FROM customer WHERE " + uniqueAttributeName + " = ?");
+            preStt = conn.prepareStatement("SELECT " +  uniqueAttributeName + " FROM " + table_name + " WHERE " + uniqueAttributeName + " = ?");
             preStt.setString(1, uniqueAttribute);
+            System.out.println(preStt);
             rs = preStt.executeQuery();
-            while(rs.next())
-            {
+            while(rs.next()){
                 result = rs.getString(1);
             }
-            if(!(result.equals("")))
-            {
+            if(!(result.equals(""))){                    
                 return true;
             }                
+
         }
-        catch(SQLException e)
-        {
+        catch(SQLException e){
             e.printStackTrace();
             System.out.println("ardbs.DatabaseController.dataExists() SQLException" + table_name + " and " + uniqueAttribute);
         }
         return false;
     }
-
     private boolean customerExists(String mail)
     {
         try
