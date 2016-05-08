@@ -1,7 +1,8 @@
-package ardbs;
+
 import java.util.Scanner;
 public class Seat 
 {
+    //dsgfsdg
     private String seatNo;
     private boolean isFirstRow;
     private boolean isEcon;

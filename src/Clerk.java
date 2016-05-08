@@ -1,5 +1,3 @@
-package ardbs;
-
 public class Clerk extends Staff
 {
 

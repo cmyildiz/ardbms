@@ -1,14 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package ardbs;
-
-/**
- *
- * @author NECATİ YILDIZ
- */
 public abstract class Crew {
     private int crew_id;
     private String name;

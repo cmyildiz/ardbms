@@ -1,5 +1,3 @@
-package ardbs;
-
 public class SystemManager extends Staff
 {
     private int permissionLevel;

@@ -1,5 +1,3 @@
-package ardbs;
-
 public abstract class Staff 
 {
     private int user_id;

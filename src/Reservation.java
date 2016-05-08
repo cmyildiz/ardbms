@@ -1,5 +1,3 @@
-package ardbs;
-
 public class Reservation 
 {
     private int reservation_id;
