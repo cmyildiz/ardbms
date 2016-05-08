@@ -1,4 +1,4 @@
-public abstract class Staff 
+public abstract class Staff extends User
 {
     private int user_id;
     private String name;

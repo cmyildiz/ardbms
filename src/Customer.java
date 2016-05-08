@@ -1,6 +1,6 @@
 import static java.sql.JDBCType.NULL;
 
-public class Customer {
+public class Customer extends User {
     private int customer_id;
     private boolean is_register;
     private String password;
