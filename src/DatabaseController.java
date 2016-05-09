@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 import java.util.*;
 import java.sql.*;
 
@@ -11,7 +6,7 @@ public class DatabaseController
     private static final String JDBC_DRIVER ="com.mysql.jdbc.Driver";
     private static final  String URL = "jdbc:mysql://localhost:3306/ardbs";
     private static final String USERNAME = "root";
-    private static final  String PASSWORD = "asdasdas9";
+    private static final  String PASSWORD = "cs353";
     private  Connection conn;
     protected  String sqlCommand;
     protected  Statement statement;
