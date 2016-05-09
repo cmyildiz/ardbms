@@ -13,7 +13,13 @@ public class SystemManager extends Staff
         super(user_id, name, surname, salary, mail, password, mobilePhone);
         this.permissionLevel=permissionLevel;
     }
-
+    
+    public void display(){
+        System.out.println( super.getUser_id() + "\t" + super.getName()
+                + "\t" + super.getSurname() + "\t" + super.getSalary() + "\t" + super.getMail() + "\t" +super.getPassword() 
+                + "\t" + super.getMobilePhone() + "\t" + permissionLevel);
+    }
+    
     public int getPermissionLevel() 
     {
         return permissionLevel;

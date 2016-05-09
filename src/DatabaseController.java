@@ -15,8 +15,10 @@ public class DatabaseController
     private  Connection conn;
     protected  String sqlCommand;
     protected  Statement statement;
+   // protected  ResultSet rs = null;
     protected  ResultSet rs;
-    private  PreparedStatement preStt;
+    //private  PreparedStatement preStt;
+   // private  PreparedStatement preStt;
     private static DatabaseController dbInstance = null;
 
     //CREATE QUERIES
@@ -104,11 +106,13 @@ public class DatabaseController
 
     public void closeConnection()
     {
+        PreparedStatement preStt;
         try
         {
+            
             conn.close ();
             statement.close ();
-            preStt.close ();
+            //preStt.close ();
         }
         catch(SQLException ex)
         {
@@ -172,6 +176,23 @@ public class DatabaseController
             att.add(s);
         }
         return att;
+    }
+    public User login(String mail, String password){
+        User u = null;
+        int x = loginSelect(mail, password);
+        if( x == 0){            
+            u = getCustomer(mail);
+        }
+        else if( x == 1){
+            u = getClerk(mail);
+        }
+        else if( x == 2){
+            u = getManager(mail);
+        }
+        else{
+            //TODO 
+        }
+        return u;
     }
     public int loginSelect(String mail, String password)
     {
@@ -241,6 +262,8 @@ public class DatabaseController
     
     private void insertToQuery(String table_name, ArrayList<String> attributesToAdd)
     {
+        PreparedStatement preStt;
+        ResultSet rs = null;
         try
         {
             checkConnection();
@@ -341,6 +364,7 @@ public class DatabaseController
     //General purpose executeQuery() method
     public String queryExecute(String query)
     {
+        ResultSet rs = null;
         try
         {
             checkConnection();
@@ -378,6 +402,7 @@ public class DatabaseController
     
     public String queryExecute(PreparedStatement ps)
     {
+        ResultSet rs = null;
         try
         {
             checkConnection();
@@ -408,7 +433,8 @@ public class DatabaseController
     
     public ArrayList<Flight> createFlightListCustomer(String dest_code, String depart_code, String fDate)
     {
-        
+        ResultSet rs = null;
+        PreparedStatement preStt = null;
         ArrayList<Flight> flights = new ArrayList<Flight>();
         try
         {
@@ -485,6 +511,7 @@ public class DatabaseController
     
     public String showFlightsForCustomer(String dest_code, String depart_code, String fDate)
     {
+        PreparedStatement preStt = null;
         try
         {
             checkConnection();
@@ -509,6 +536,8 @@ public class DatabaseController
                                     String TCKN, String cname, String csurname, 
                                     String birthday, String mail, String mob_phone)
     {
+        ResultSet rs = null;
+        PreparedStatement preStt = null;
         //Customer c = new Customer(0, is_register, password, TCKN, cname, csurname, birthday, mail, mob_phone);
         if(!(customerExists(mail)))
         {               
@@ -574,6 +603,7 @@ public class DatabaseController
             String csurname, String birthday, String mail,
             String mob_phone)
     {
+        PreparedStatement preStt = null;
         Customer c = new Customer(TCKN, cname, csurname, birthday, mail, mob_phone);
 
         if(customerExists(mail))
@@ -609,9 +639,124 @@ public class DatabaseController
         }
         return c;    
     }
+    public SystemManager getManager(String mail){
+        ResultSet rs = null;
+        PreparedStatement preStt = null;
+        SystemManager c = null;
+        int id = Integer.parseInt(getIdString("staff", "user_id", "mail", mail));
+        String name = "", surname = "", password = "", mob_phone = "";
+        int pL = -1;
+        double salary = -1;
+        try{
+            preStt = conn.prepareStatement("SELECT * " +
+                                                "FROM system_manager NATURAL JOIN staff WHERE system_manager.user_id = ?");
+            preStt.setInt(1, id);
+            rs = preStt.executeQuery();
+            while(rs.next()){
+            pL = rs.getInt("permission_level");
+            name = rs.getString("name");
+            surname = rs.getString("surname");
+            password = rs.getString("password");
+            mob_phone = rs.getString("mob_phone");
+            salary = rs.getDouble("salary");
+            }
+            c = new SystemManager(id, name, surname, salary, mail, password, mob_phone, pL);
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+            System.out.println("ardbs.DatabaseController.getManager() SQLException");
+        }
+        if(c == null)
+            System.out.println("Manager is NULL");
+        return c;
+    }
     //Worked
+    public Clerk getClerk(int id){
+        PreparedStatement preStt = null;
+        ResultSet rs = null;
+        Clerk c = null;
+        int bId = 0;
+        String comName = "", bName = "", name = "", mail = "",
+                surname = "", password = "", mob_phone = "";
+        double salary = -1;
+        try{
+            preStt = conn.prepareStatement("SELECT clerk.branch_id, company_name, branch_name " +
+                                                "FROM clerk NATURAL JOIN branch WHERE clerk.user_id = ?");
+            preStt.setInt(1, id);
+            rs = preStt.executeQuery();
+            while(rs.next()){
+            bId = rs.getInt("branch_id");
+            comName = rs.getString("company_name");
+            bName = rs.getString("branch_name");
+            }
+            preStt = conn.prepareStatement("SELECT * " +
+                                           "FROM staff" +
+                                           " WHERE user_id = ?");
+            preStt.setInt(1, id);
+            rs = preStt.executeQuery();
+            while(rs.next()){
+            name = rs.getString("name");
+            surname = rs.getString("surname");
+            password = rs.getString("password");
+            mob_phone = rs.getString("mob_phone");
+            salary = rs.getDouble("salary");
+            mail = rs.getString("mail");
+            }
+            Branch b1 = new Branch(bId, bName);
+            c = new Clerk(id, b1, name, surname, salary, mail, password, mob_phone, comName);
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+            System.out.println("ardbs.DatabaseController.getClerk() SQLException");
+        }
+        return c;
+    }
+    public Clerk getClerk(String mail){
+        PreparedStatement preStt;
+        Clerk c = null;
+        int id = Integer.parseInt(getIdString("staff", "user_id", "mail", mail));
+        int bId = 0;
+        String comName = "", bName = "", name = "", 
+                surname = "", password = "", mob_phone = "";
+        double salary = -1;
+        try{
+            preStt = conn.prepareStatement("SELECT clerk.branch_id, company_name, branch_name " +
+                                                "FROM clerk NATURAL JOIN branch WHERE clerk.user_id = ?");
+            preStt.setInt(1, id);
+            rs = preStt.executeQuery();
+            while(rs.next()){
+            bId = rs.getInt("branch_id");
+            comName = rs.getString("company_name");
+            bName = rs.getString("branch_name");
+            }
+            preStt = conn.prepareStatement("SELECT * " +
+                                           "FROM staff" +
+                                           " WHERE user_id = ?");
+            preStt.setInt(1, id);
+            rs = preStt.executeQuery();
+            while(rs.next()){
+            name = rs.getString("name");
+            surname = rs.getString("surname");
+            password = rs.getString("password");
+            mob_phone = rs.getString("mob_phone");
+            salary = rs.getDouble("salary");
+            }
+            Branch b1 = new Branch(bId, bName);
+            c = new Clerk(id, b1, name, surname, salary, mail, password, mob_phone, comName);
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+            System.out.println("ardbs.DatabaseController.getClerk() SQLException");
+        }
+        return c;
+    }
     public Customer getCustomer(String mail)
     {
+        ResultSet rs = null;
+        PreparedStatement preStt = null;
         Customer c = null;
         if(customerExists(mail))
         {
@@ -673,6 +818,7 @@ public class DatabaseController
         String csurname, String birthday, String mail,
         String mob_phone)
     {
+        PreparedStatement preStt = null;
         Customer c = null;
 
         if(customerExists(mail))
@@ -701,6 +847,8 @@ public class DatabaseController
     //getid for string ids WORKED
     private String getIdNonString(String table_name, String idName, String ... uniqueAttributes)
     {
+        ResultSet rs = null;
+        PreparedStatement preStt = null;
         String result = "";
         try
         {
@@ -740,6 +888,8 @@ public class DatabaseController
     
     private String getIdString(String table_name, String idName, String ... uniqueAttributes)
     {
+        ResultSet rs = null;
+        PreparedStatement preStt = null;
         String result = "";
         try
         {
@@ -805,6 +955,8 @@ public class DatabaseController
     }
     private boolean dataExists(String table_name, String uniqueAttributeName, String uniqueAttribute)
     {
+        ResultSet rs = null;
+        PreparedStatement preStt = null;
         try
         {
             String result = "";
@@ -831,6 +983,8 @@ public class DatabaseController
 
     private boolean customerExists(String mail)
     {
+        ResultSet rs = null;
+        PreparedStatement preStt = null;
         try
         {
             String result = "";
@@ -869,6 +1023,8 @@ public class DatabaseController
 
     public Pilot getPilot(int pilotId)
     {
+        ResultSet rs = null;
+        PreparedStatement preStt = null;
         Pilot p = null;
         if(pilotExists(pilotId))
         {
@@ -978,9 +1134,36 @@ public class DatabaseController
         }
         return false;
     }
-
+    public Reservation insertReservation(int seatCount, int flightId, String mealChoice, Customer customer, Clerk c2){
+        Reservation r = insertReservation(seatCount, flightId, mealChoice, customer);
+        r = setClerkToReserv(r, c2);
+        return r;
+    }
+    private Reservation setClerkToReserv(Reservation r, Clerk c){
+        PreparedStatement preStt = null;
+        Reservation s = null;
+        try{            
+            int rNo = r.getReservation_id();
+            int clerkId = c.getUser_id();
+            preStt = conn.prepareStatement("UPDATE reservation SET clerk_id = ? WHERE reservation_no = ?");
+            preStt.setInt(1, clerkId);
+            preStt.setInt(2, rNo);
+            int re = preStt.executeUpdate();
+            if( re == 1){
+                s = r;
+                s.setClerk(c);
+            }
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+            System.out.println("DatabaseController.setClerkToReserv() SQLException");
+        }
+        return s;
+    }
     public Reservation insertReservation(int seatCount, int flightId, String mealChoice, Customer customer)
     {
+        ResultSet rs = null;
+        PreparedStatement preStt = null;
         Reservation r = null; 
 
         int customerId = customer.getCustomer_id();
@@ -1050,5 +1233,72 @@ public class DatabaseController
             System.out.println("ardbs.DatabaseController.getinsertReservation() connection Exception!");
         }
         return r;
+    }
+    public boolean deleteRes(Reservation r){
+        PreparedStatement preStt;
+        ResultSet rs = null;
+        if(reservationExists(r.getFlightId(), r.getCustomer().getCustomer_id())){
+            try{
+                preStt = conn.prepareStatement("DELETE FROM reserved_seat WHERE res_no = ?");
+                preStt.setInt(1, r.getReservation_id());
+                preStt.executeUpdate();
+                preStt = conn.prepareStatement("DELETE FROM reservation WHERE reservation_no = ?");
+                preStt.setInt(1, r.getReservation_id());
+                preStt.executeUpdate();
+                return true;
+            }
+            catch(SQLException e){
+                e.printStackTrace();
+                System.out.println("DatabaseController.RservationListCustomer() SQLException");
+            }
+        }         
+        return false;
+    }
+    public ArrayList<Reservation> reservationListCustomer(Customer c){
+        ResultSet rs = null;
+        PreparedStatement preStt = null;
+        ArrayList<Reservation> rList = new ArrayList<Reservation>();
+        
+        try{
+            preStt = conn.prepareStatement("SELECT * FROM reservation WHERE customer_id = ?");
+            preStt.setInt(1, c.getCustomer_id());
+            int rNo = -1;
+            int flightId = -1;
+            int clerkId = -1;
+            int promId = -1;
+            int seatC = -1;
+            String mealChoice = "";
+            rs = preStt.executeQuery();
+            //ResultSetMetaData rsmd = rs.getMetaData();
+            //int columnCount = rsmd.getColumnCount();
+            Reservation r1;
+            while(rs.next())
+            {
+                rNo = rs.getInt(1);
+                flightId = rs.getInt(3);
+                clerkId = rs.getInt(4);
+                promId = rs.getInt(5);
+                seatC = rs.getInt(6);
+                mealChoice = rs.getString(7);
+                Clerk c1;
+                   if(clerkId != 0)
+                   {
+                       c1 = getClerk(clerkId);
+                       r1 = new Reservation(rNo, c, flightId, c1, promId, seatC, mealChoice);
+                   }
+                   else
+                   {
+                        r1 = new Reservation(rNo, c, flightId, promId, seatC, mealChoice);
+                   }
+                   //public Reservation(int reservation_id, Customer customer, int flightId, Clerk clerk, int promotion_id, int seat_count, String meal_choice) 
+                   
+                   rList.add(r1);                
+            }
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+            System.out.println("DatabaseController.RservationListCustomer() SQLException");
+        }
+        return rList;
     }
 }

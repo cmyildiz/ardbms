@@ -1,3 +1,5 @@
+import java.util.*;
+
 public class ARDBS 
 {
     public static void main(String[] args) 
@@ -5,6 +7,22 @@ public class ARDBS
         
         // TODO code application logic here
         DatabaseController db = new DatabaseController();
+        /*Customer c = db.getCustomer("Dejesus7@example.com");
+        /*ArrayList<Reservation> R = db.reservationListCustomer(c);
+        for(int i = 0; i < R.size(); i++){
+            Reservation r1 = R.get(i);
+            db.deleteRes(r1);
+        }
+        /*Customer c = db.getCustomer("Lyda.K_Pipkin@example.com");
+        Reservation r = db.insertReservation(3, 12188, "bok", c);
+        Clerk cl = db.getClerk("FineX@example.com");
+        r = db.setClerkToReserv(r, cl);
+        r.display();*/
+        //db.setClerkToReserv();
+        /*SystemManager m = db.getManager("JeffereyYSteel1@nowhere.com");
+        m.display();
+        /*Clerk c = db.getClerk("Fultz@example.com");
+        c.display();
         //ystem.out.println(db.getIdNonString("reservation", "reservation_no", "customer_id", "92449", "flight_id", "42696"));
         //aa
         /*Customer c = db.getCustomer("Wilkinson1@nowhere.com");

@@ -39,6 +39,11 @@ public class Clerk extends Staff
     /**
      * @return the branch
      */
+    public void display(){
+        System.out.println( super.getUser_id() + "\t" + branch.getBranch_id() + "\t" + super.getName()
+                + "\t" + super.getSurname() + "\t" + super.getSalary() + "\t" + super.getMail() + "\t" +super.getPassword() 
+                + "\t" + super.getMobilePhone() + "\t" + companyName);
+    }
     public Branch getBranch() {
         return branch;
     }

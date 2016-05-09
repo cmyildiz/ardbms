@@ -10,11 +10,11 @@ public class Reservation
     
     Reservation()
     {
-        reservation_id=-1;
+        reservation_id=0;
         customer=null;
-        flightId=-1;
+        flightId=0;
         clerk=null;
-        promotion_id=-1;
+        promotion_id=0;
         seat_count=0;
         meal_choice="";        
     }
@@ -25,6 +25,16 @@ public class Reservation
         this.customer = customer;
         this.flightId = flightId;
         this.clerk = clerk;
+        this.promotion_id = promotion_id;
+        this.seat_count = seat_count;
+        this.meal_choice = meal_choice;
+    }
+    public Reservation(int reservation_id, Customer customer, int flightId, int promotion_id, int seat_count, String meal_choice) 
+    {
+        this.reservation_id = reservation_id;
+        this.customer = customer;
+        this.flightId = flightId;
+        this.clerk = null;
         this.promotion_id = promotion_id;
         this.seat_count = seat_count;
         this.meal_choice = meal_choice;
