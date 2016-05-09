@@ -442,11 +442,12 @@ public class DatabaseController
             try
             {
                 checkConnection();
-                preStt = conn.prepareStatement("SELECT depart_time, duration, flight_no, bus_price, econ_price\n" 
-                                                                        +"FROM flight \n"
-                                                                        +"WHERE iata_destination = ? \n"
-                                                                        +"AND iata_depart = ? \n"
-                                                                        +"AND fdate = ?" );
+                //Flight(int flight_id, String departT, int duration, String flightNo, double busP, double econP) {
+                preStt = conn.prepareStatement("SELECT flight_id, depart_time, duration, flight_no, bus_price, econ_price\n" 
+                                                +"FROM flight \n"
+                                                +"WHERE iata_destination = ? \n"
+                                                +"AND iata_depart = ? \n"
+                                                +"AND fdate = ?" );
                 preStt.setString(1, dest_code);
                 preStt.setString(2, depart_code);
                 preStt.setString(3, fDate);
@@ -456,21 +457,20 @@ public class DatabaseController
                 e.printStackTrace();
             }   
             rs = preStt.executeQuery();
-
-            String departT;
-            int duration;
-            String flightNo;
-            double busP;
-            double econP;
             while(rs.next())
             {      
-                //depart_time, duration, flight_no, bus_price, econ_price
-                departT = rs.getString(1);
-                duration = rs.getInt(2);
-                flightNo = rs.getString(3);
-                busP = rs.getDouble(4);
-                econP = rs.getDouble(5);                                
-                Flight f = new Flight(departT, duration, flightNo, busP,econP);
+                //flight_id, depart_time, duration, flight_no, bus_price, econ_price
+                //Flight(int flight_id, String departT, int duration, String flightNo, double busP, double econP) {
+                System.out.println(rs.getInt("flight_id"));
+                System.out.println(rs.getString("depart_time"));
+                System.out.println(rs.getInt("duration"));
+                System.out.println(rs.getString("flight_no"));
+                System.out.println(rs.getDouble("bus_price"));
+                System.out.println(rs.getDouble("econ_price"));
+                
+                Flight f = new Flight(rs.getInt("flight_id"), rs.getString("depart_time"), rs.getInt("duration"),
+                        rs.getString("flight_no"), rs.getDouble("bus_price"), rs.getDouble("econ_price"));
+
                 flights.add(f);
             }            
         }
@@ -1213,7 +1213,9 @@ public class DatabaseController
         
         java.util.Date t = cal.getTime();
 
-        return t.toString().substring(0, t.toString().length()-9);
+        String ss = t.toString().substring(0, t.toString().length()-9);
+        ss = ss.substring(3);
+        return ss;
     }
     
     public String readSeatPlan()

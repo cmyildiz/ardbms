@@ -1,12 +1,49 @@
 import java.util.*;
+import javax.swing.JPanel;
 
 public class ARDBS 
-{
+{        static MainFrame m = new MainFrame();
+    public static Flight ff = new Flight();
+    
+     public static void setDisplayPanel(JPanel panel) {
+        m.setPanel(panel);
+    }   
+     
     public static void main(String[] args) 
     {
         
+        // f =new AvailableFlights(flightList, arrivalTimes, flightToReserve, 0)
         // TODO code application logic here
         DatabaseController db = new DatabaseController();
+        ArrayList<Flight> flightList = db.createFlightListCustomer("RDD", "BVA", "2016-06-16");
+        ArrayList<String> a = new ArrayList<String>();
+        
+/*
+        for(int i = 0; i < flightList.size() ; i++)
+        {
+            flightList.get(i).displayForCustomer();
+        }*/
+        
+        for(int i = 0; i < flightList.size() ; i++){
+            String sa = "" +flightList.get(i).getFlight_id();
+            a.add(db.arrivalTime(sa));
+        }
+     
+        m.setVisible(true);
+        JPanel current = new AvailableFlights(flightList, a, ff);
+        setDisplayPanel(current);
+        System.out.println(ff.getFlight_id());
+        while(ff.getFlight_id() == 0){
+            System.out.println("id = " + ff.getFlight_id());
+            if(ff.getFlight_id() != 0){
+                System.out.println("new id = " + ff.getFlight_id());
+                ff.displayForCustomer();
+                System.out.println("No NULL");
+            }
+        }
+        
+        System.out.println("Finished");
+       // AvailableFlights f = new AvailableFlights(flightList, a, ff);
         /*Clerk[] C = db.mailsLike("example");
         for(int i= 0; i < C.length; i++){
             C[i].display();

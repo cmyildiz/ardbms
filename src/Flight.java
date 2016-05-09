@@ -37,6 +37,25 @@ public class Flight {
         this.bus_price = bus_price;
         this.econ_price = econ_price;
     }
+
+    Flight(int flight_id, String departT, int duration, String flightNo, double busP, double econP) {
+        this.flight_id = flight_id;
+        this.flight_no = flightNo;
+        this.depart_time = departT;
+        this.duration = duration;
+        this.bus_price = busP;
+        this.econ_price =  econP;
+    }
+    
+    public void initializer(Flight f)
+    {
+        this.flight_id = f.getFlight_id();
+        this.flight_no = f.getFlight_no();
+        this.depart_time = f.getDepart_time();
+        this.duration = f.getDuration();
+        this.bus_price = f.getBus_price();
+        this.econ_price =  f.getEcon_price();       
+    }
     
     public void displayForCustomer(){
             System.out.println(flight_no + "\t" + depart_time + "\t" + duration + "\t" + bus_price + "\t" + econ_price + "\n" );
