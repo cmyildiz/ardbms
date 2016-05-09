@@ -1087,6 +1087,8 @@ public class DatabaseController
     
     public String arrivalTime(String flight_id)
     {
+        ResultSet rs = null;
+        PreparedStatement preStt = null;
         String departureTZstr="";
         String destinationTZstr="";
         int departureTZ=0;
@@ -1181,6 +1183,8 @@ public class DatabaseController
     
     public String readSeatPlan()
     {
+        ResultSet rs = null;
+        PreparedStatement preStt = null;
         String seatPlan="";
         try
         {
