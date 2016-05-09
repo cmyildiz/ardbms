@@ -1061,67 +1061,131 @@ public class DatabaseController
         }
         return p; 
     }
-    /*public int arrivalTime(String flight_id){
-        try{
+    
+    public String arrivalTime(String flight_id)
+    {
+        String departureTZstr="";
+        String destinationTZstr="";
+        int departureTZ=0;
+        int destinationTZ=0;
+        int duration=0;
+        String departTime="";
+        java.util.Date fDate=null;
+        Calendar cal = Calendar.getInstance();
+        
+        try
+        {
             checkConnection();
-            preStt = conn.prepareStatement("SELECT city.time_zone, flight.duration, flight.depart_time FROM city, airport, flight\n" +
-                                           "WHERE flight.iata_depart = airport.iata_code\n" +
-                                           "AND airport.city = city.name \n" +
-                                           "AND aiport.country = city.country\n"+ 
-                                           "AND flight_id = ?");
-                    preStt.setString(1, flight_id);
-                    rs = preStt.executeQuery();
-                    String depart = "";
-                    int depTZ = 1000;
-                    int duration;
-                    Time depart_time;
+            preStt = conn.prepareStatement( "SELECT city.time_zone, flight.duration, flight.depart_time, flight.fdate " 
+                                            +"FROM city, airport, flight "
+                                            +"WHERE flight.iata_depart = airport.iata_code "
+                                            +"AND airport.c_name = city.name "
+                                            +"AND airport.country = city.country " 
+                                            +"AND flight_id = ?");
 
-                    while(rs.next()){
-                        depart = rs.getString(1);
-                        duration = rs.getInt(2);
-                        depart_time = rs.getTime(3);
-                    }
-                    if(depart.length() < 5){
-                        depTZ = 0;
-                    }
-                    else{
-                        depTZ = Integer.parseInt(depart.substring(4, 5));
-                    }
+            preStt.setString(1, flight_id);
+            rs = preStt.executeQuery();
+            
+            while(rs.next())
+            {
+                departureTZstr = rs.getString(1);
+                duration = rs.getInt(2);
+                departTime = rs.getString(3);
+                fDate = rs.getDate(4);
+            }
+            
+            if(departureTZstr.length()>3)
+            {
+                departureTZ = Integer.parseInt(departureTZstr.substring(3));
+            }
+            
+            String flightDate = fDate.toString();
 
+            int year = Integer.parseInt(flightDate.substring(0, 4));
+            int month = Integer.parseInt(flightDate.substring(5, 7));
+            int day = Integer.parseInt(flightDate.substring(8));
+            int hour = Integer.parseInt(departTime.substring(0, 2));
+            int minutes = Integer.parseInt(departTime.substring(3, 5));
+            int seconds = Integer.parseInt(departTime.substring(6, 8));
+            System.out.println(year+" "+month+" "+day+" "+hour +" "+minutes+" "+seconds);
+
+            cal.set(year, month, day, hour, minutes, seconds);
+            
+            cal.add(Calendar.MINUTE, duration);
+            System.out.println(duration);
+            System.out.println(departureTZ +" " +duration +" "+" " +fDate+" ");
         }
-        catch(SQLException e){
+        catch(SQLException e)
+        {
             e.printStackTrace();
             System.out.println("SQLException arrivaTime() depart");
         }
-         try{
+        
+        try
+        {
             checkConnection();
-            preStt = conn.prepareStatement("SELECT city.time_zone FROM city, airport, flight\n" +
-                                           "WHERE flight.iata_destination = airport.iata_code\n" +
-                                           "AND airport.city = city.name \n" +
-                                           "AND aiport.country = city.country\n"+ 
-                                           "AND flight_id = ?");
-                    preStt.setString(1, flight_id);
-                    rs = preStt.executeQuery();
-                    String dest = "";
-                    int destTZ = 1000;
+            preStt = conn.prepareStatement( "SELECT city.time_zone " 
+                                            +"FROM city, airport, flight "
+                                            +"WHERE flight.iata_destination = airport.iata_code "
+                                            +"AND airport.c_name = city.name "
+                                            +"AND airport.country = city.country " 
+                                            +"AND flight_id = ?");
 
-                    while(rs.next()){
-                        dest = rs.getString(1);                            
-                    }
-                    if(dest.length() < 5){
-                        destTZ = 0;
-                    }
-                    else{
-                        destTZ = Integer.parseInt(dest.substring(4, 5));
-                    }
-
+            preStt.setString(1, flight_id);
+            rs = preStt.executeQuery();
+            
+            while(rs.next())
+            {
+                destinationTZstr = rs.getString(1);                            
+            }
+            if(departureTZstr.length()>3)
+            {
+                destinationTZ = Integer.parseInt(destinationTZstr.substring(3));
+            }
+            cal.add(Calendar.HOUR_OF_DAY, departureTZ-destinationTZ);
+            System.out.println(destinationTZ);
         }
-        catch(SQLException e){
+        catch(SQLException e)
+        {
             e.printStackTrace();
             System.out.println("SQLException arrivaTime() dest");
         }
-        return 0;
-    }*/
+        
+        java.util.Date t = cal.getTime();
+
+        return t.toString().substring(0, t.toString().length()-9);
+    }
+    
+    public String readSeatPlan()
+    {
+        String seatPlan="";
+        try
+        {
+            checkConnection();
+            preStt = conn.prepareStatement("SELECT * FROM seatPlan");
+
+            rs = preStt.executeQuery();
+
+            while(rs.next())
+            {
+                for(int i=1; i<11; i++)
+                {
+                    if(i==10)
+                        seatPlan+=rs.getString(i)+"\n";
+                    else
+                        seatPlan+=rs.getString(i)+" ";                      
+                }        
+            }
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+            System.out.println("SQLException arrivaTime() dest");
+        }
+        return seatPlan;
+    }
+    
+    
     private boolean reservationExists(int flightId, int customerId)
     {
         String result = "";

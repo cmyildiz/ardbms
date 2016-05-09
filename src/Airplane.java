@@ -13,7 +13,7 @@ public class Airplane
 
     Airplane()
     {
-        seatList = null;
+        seatList = new ArrayList<Seat>();
         airplane_id=0;
         company="";
         model="";
@@ -87,7 +87,8 @@ public class Airplane
     /**
      * @return the seat_count
      */
-    public int getSeatCount() {
+    public int getSeatCount() 
+    {
         return seatCount;
     }
 
@@ -110,6 +111,21 @@ public class Airplane
      */
     public void setRank(int rank) {
         this.rank = rank;
+    }
+    
+    public void showSeatPlan()
+    {
+        for(int i=0; i<seatList.size(); i++)
+        {
+            if(i!=0 && i%9==0)
+            {
+                System.out.println(seatList.get(i).getSeatNo());
+            }
+            else
+                System.out.print(seatList.get(i).getSeatNo()+" ");
+
+
+        }
     }
     
     public void readSeatPlan(String seatPlanStr, int colCount)
@@ -136,6 +152,8 @@ public class Airplane
                     s.setFirstRow();
                 else if(x==colCount && Character.isDigit(seatStr.charAt(0)))
                     s.setSeat(false);
+                
+                seatList.add(s);
             }
             x=0;
         }
