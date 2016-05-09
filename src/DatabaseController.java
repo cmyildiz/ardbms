@@ -6,7 +6,8 @@ public class DatabaseController
     private static final String JDBC_DRIVER ="com.mysql.jdbc.Driver";
     private static final  String URL = "jdbc:mysql://localhost:3306/ardbs";
     private static final String USERNAME = "root";
-    private static final  String PASSWORD = "cs353";
+    private static final  String PASSWORD = "asdasdas9";
+    private static final ArrayList<Integer> flightCount = new ArrayList<Integer>();
     private  Connection conn;
     protected  String sqlCommand;
     protected  Statement statement;
@@ -16,6 +17,9 @@ public class DatabaseController
    // private  PreparedStatement preStt;
     private static DatabaseController dbInstance = null;
 
+    public  ArrayList<Integer> getFlightCounts(){
+        return flightCount;
+    }
     //CREATE QUERIES
 
 
@@ -1015,24 +1019,55 @@ public class DatabaseController
         }
         return false;
     }
+    public Clerk[] mailsLike(String pattern){
+        ResultSet rs = null;
+        PreparedStatement preStt = null;
+        ArrayList<Clerk> cs = new ArrayList<Clerk>();
+        try{
+            preStt = conn.prepareStatement("SELECT staff.mail\n" +
+                                            "FROM clerk,staff\n" +
+                                            "WHERE clerk.user_id = staff.user_id\n" +
+                                            "AND staff.mail LIKE '%" + pattern + "%';");
+            rs = preStt.executeQuery();
+            while(rs.next()){
+                String mail = rs.getString("mail");
+                Clerk c = getClerk(mail);
+                cs.add(c);
+            }
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+            System.out.println("DatabaseController.mailsLike() SQLException");
+        }
+        Clerk[] result = new Clerk[cs.size()];
+        for(int i = 0; i < cs.size(); i++){
+            result[i] = cs.get(i);
+        }
+        return result;
+    }
     public Pilot[] mostFlyers(int noOfFlights){
         ResultSet rs = null;
         PreparedStatement preStt = null;
         ArrayList<Pilot> ps = new ArrayList<Pilot>();
         try{
-            preStt = conn.prepareStatement("SELECT crew.crew_id\n" +
+            preStt = conn.prepareStatement("SELECT crew.crew_id, COUNT(flight.flight_id) AS c\n" +
                                             "FROM crew,pilot, crew_assignment, flight  \n" +
                                             "WHERE crew.crew_id = pilot.crew_id\n" +
                                             "AND crew_assignment.crew_id = pilot.crew_id \n" +
                                             "AND crew_assignment.flight_id = flight.flight_id \n" +
                                             "GROUP BY pilot.crew_id \n" +
-                                            "HAVING COUNT(flight.flight_id) > ?");
+                                            "HAVING c > ?");
             preStt.setInt(1, noOfFlights);
             rs = preStt.executeQuery();
+
             while(rs.next()){
                 int id = rs.getInt("crew_id");
                 ps.add(getPilot(id));
+                int x= rs.getInt("c");
+                flightCount.add(x);
             }
+            
         }
         catch(SQLException e){
             e.printStackTrace();

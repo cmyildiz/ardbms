@@ -7,10 +7,18 @@ public class ARDBS
         
         // TODO code application logic here
         DatabaseController db = new DatabaseController();
-        Pilot[] p = db.mostFlyers(1);
-        for(int i= 0; i < p.length; i++){
+        /*Clerk[] C = db.mailsLike("example");
+        for(int i= 0; i < C.length; i++){
+            C[i].display();
+        }
+        /*Pilot[] p = db.mostFlyers(1);
+        ArrayList<Integer> A = db.getFlightCounts();
+        /*for(int i= 0; i < p.length; i++){
             p[i].displayPilot();
         }
+        for(int i= 0; i < p.length; i++){
+            System.out.println(A.get(i));
+        }*/
         /*Customer c = db.getCustomer("Dejesus7@example.com");
         /*ArrayList<Reservation> R = db.reservationListCustomer(c);
         for(int i = 0; i < R.size(); i++){
