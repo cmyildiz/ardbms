@@ -1020,7 +1020,35 @@ public class DatabaseController
         }
         return false;
     }
-
+    public Pilot[] mostFlyers(int noOfFlights){
+        ResultSet rs = null;
+        PreparedStatement preStt = null;
+        ArrayList<Pilot> ps = new ArrayList<Pilot>();
+        try{
+            preStt = conn.prepareStatement("SELECT crew.crew_id\n" +
+                                            "FROM crew,pilot, crew_assignment, flight  \n" +
+                                            "WHERE crew.crew_id = pilot.crew_id\n" +
+                                            "AND crew_assignment.crew_id = pilot.crew_id \n" +
+                                            "AND crew_assignment.flight_id = flight.flight_id \n" +
+                                            "GROUP BY pilot.crew_id \n" +
+                                            "HAVING COUNT(flight.flight_id) > ?");
+            preStt.setInt(1, noOfFlights);
+            rs = preStt.executeQuery();
+            while(rs.next()){
+                int id = rs.getInt("crew_id");
+                ps.add(getPilot(id));
+            }
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+            System.out.println("DatabaseController.mostFlyers() SQLException ");
+        }
+        Pilot[] result = new Pilot[ps.size()];
+        for(int i = 0; i < ps.size(); i++){
+            result[i] = ps.get(i);
+        }
+        return result;
+    }
     public Pilot getPilot(int pilotId)
     {
         ResultSet rs = null;
